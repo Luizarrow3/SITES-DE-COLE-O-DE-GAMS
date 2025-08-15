@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameVault - Coleção Premium de Jogos</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-item {
+            cursor: pointer;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Home Page */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 2rem;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #fff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .floating-icon {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.1);
+            font-size: 3rem;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Games Library Page */
+        .games-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .page-title {
+            text-align: center;
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-tab:hover, .filter-tab.active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .game-image {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .game-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+
+        .game-card:hover .game-image img {
+            transform: scale(1.1);
+        }
+
+        .game-info {
+            padding: 1.5rem;
+            color: white;
+        }
+
+        .game-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-category {
+            color: #ff6b6b;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .game-description {
+            opacity: 0.8;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .game-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stars {
+            color: #ffd700;
+        }
+
+        .game-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #4ecdc4;
+        }
+
+        /* About Page */
+        .about-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            color: white;
+        }
+
+        .about-hero {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ff6b6b;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4ecdc4;
+            display: block;
+        }
+
+        /* Contact Page */
+        .contact-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            color: white;
+        }
+
+        .contact-form {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-input::placeholder, .form-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form-textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .contact-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .contact-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #ff6b6b;
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .social-link {
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            color: #ff6b6b;
+            transform: translateY(-3px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.9);
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .about-content, .contact-info {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container {
+                padding: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .contact-form {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <i class="fas fa-gamepad"></i>
+                GameVault
+            </a>
+            <nav>
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item active" data-page="home">
+                        <i class="fas fa-home"></i> Home
+                    </li>
+                    <li class="nav-item" data-page="games">
+                        <i class="fas fa-th-large"></i> Jogos
+                    </li>
+                    <li class="nav-item" data-page="about">
+                        <i class="fas fa-info-circle"></i> Sobre
+                    </li>
+                    <li class="nav-item" data-page="contact">
+                        <i class="fas fa-envelope"></i> Contato
+                    </li>
+                </ul>
+                <div class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Home Page -->
+        <section id="home" class="page active">
+            <div class="hero">
+                <div class="floating-elements">
+                    <i class="floating-icon fas fa-gamepad" style="top: 10%; left: 10%; animation-delay: 0s;"></i>
+                    <i class="floating-icon fas fa-trophy" style="top: 20%; right: 15%; animation-delay: 1s;"></i>
+                    <i class="floating-icon fas fa-star" style="bottom: 30%; left: 20%; animation-delay: 2s;"></i>
+                    <i class="floating-icon fas fa-rocket" style="bottom: 20%; right: 10%; animation-delay: 3s;"></i>
+                </div>
+                <div class="hero-content">
+                    <h1>GameVault</h1>
+                    <p>A coleção mais exclusiva de jogos premium do mundo. Descubra títulos únicos, clássicos atemporais e os últimos lançamentos em uma experiência incomparável.</p>
+                    <div class="cta-buttons">
+                        <button class="btn btn-primary" onclick="navigateToPage('games')">
+                            <i class="fas fa-play"></i> Explorar Jogos
+                        </button>
+                        <button class="btn btn-secondary" onclick="navigateToPage('about')">
+                            <i class="fas fa-info"></i> Saiba Mais
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Games Library Page -->
+        <section id="games" class="page">
+            <div class="games-container">
+                <h2 class="page-title">Biblioteca de Jogos</h2>
+                
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-category="all">Todos</button>
+                    <button class="filter-tab" data-category="action">Ação</button>
+                    <button class="filter-tab" data-category="adventure">Aventura</button>
+                    <button class="filter-tab" data-category="rpg">RPG</button>
+                    <button class="filter-tab" data-category="strategy">Estratégia</button>
+                </div>
+
+                <div class="games-grid" id="gamesGrid">
+                    <!-- Game cards will be dynamically generated -->
+                </div>
+            </div>
+        </section>
+
+        <!-- About Page -->
+        <section id="about" class="page">
+            <div class="about-container">
+                <div class="about-hero">
+                    <h2 class="page-title">Sobre a GameVault</h2>
+                    <p style="font-size: 1.2rem; opacity: 0.9; max-width: 600px; margin: 0 auto;">
+                        Há mais de uma década, a GameVault se dedica a curar a mais refinada coleção de jogos digitais, 
+                        oferecendo experiências únicas para gamers exigentes em todo o mundo.
+                    </p>
+                </div>
+
+                <div class="about-content">
+                    <div class="feature-card">
+                        <i class="feature-icon fas fa-gem"></i>
+                        <h3>Coleção Premium</h3>
+                        <p>Jogos cuidadosamente selecionados por especialistas, garantindo qualidade excepcional em cada título.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="feature-icon fas fa-shield-alt"></i>
+                        <h3>Segurança Total</h3>
+                        <p>Plataforma 100% segura com proteção avançada para suas compras e dados pessoais.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="feature-icon fas fa-headset"></i>
+                        <h3>Suporte 24/7</h3>
+                        <p>Equipe especializada disponível round-the-clock para ajudar com qualquer questão.</p>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number">50K+</span>
+                        <span>Jogadores Ativos</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">2.5K+</span>
+                        <span>Jogos Únicos</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">98%</span>
+                        <span>Satisfação</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">12+</span>
+                        <span>Anos de Experiência</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Page -->
+        <section id="contact" class="page">
+            <div class="contact-container">
+                <h2 class="page-title">Entre em Contato</h2>
+                
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <label class="form-label" for="name">Nome Completo</label>
+                        <input type="text" id="name" class="form-input" placeholder="Seu nome completo" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="email">E-mail</label>
+                        <input type="email" id="email" class="form-input" placeholder="seu.email@exemplo.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="subject">Assunto</label>
+                        <input type="text" id="subject" class="form-input" placeholder="Assunto da mensagem" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="message">Mensagem</label>
+                        <textarea id="message" class="form-textarea" placeholder="Sua mensagem aqui..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-paper-plane"></i> Enviar Mensagem
+                    </button>
+                </form>
+
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="contact-icon fas fa-map-marker-alt"></i>
+                        <h3>Endereço</h3>
+                        <p>Av. Paulista, 1000<br>São Paulo, SP 01310-100</p>
+                    </div>
+                    <div class="contact-item">
+                        <i class="contact-icon fas fa-phone"></i>
+                        <h3>Telefone</h3>
+                        <p>+55 (11) 9999-9999<br>Seg-Sex: 9h às 18h</p>
+                    </div>
+                    <div class="contact-item">
+                        <i class="contact-icon fas fa-envelope"></i>
+                        <h3>E-mail</h3>
+                        <p>contato@gamevault.com<br>suporte@gamevault.com</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="social-links">
+            <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+        </div>
+        <p>© 2024 GameVault. Todos os direitos reservados. | Desenvolvido com paixão para gamers.</p>
+    </footer>
+
+    <script>
+        // Game data
+        const gamesData = [
+            {
+                id: 1,
+                title: "Cyber Legends 2077",
+                category: "action",
+                description: "Um RPG de ação futurista ambientado em uma metrópole cyberpunk vibrante com escolhas que moldam o destino.",
+                rating: 4.8,
+                price: "R$ 199,99",
+                image: "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/41907eda-d96a-4766-91a3-c93803cc077b.png",
+                alt: "Futuristic cyberpunk cityscape at night with neon lights and flying cars in a sci-fi video game setting"
+            },
+            {
+                id: 2,
+                title: "Mystic Realms",
+                category: "adventure",
+                description: "Explore reinos místicos cheios de criaturas fantásticas e magia ancestral em uma jornada épica.",
+                rating: 4.6,
+                price: "R$ 149,99",
+                image: "https://placehold.co/400x250",
+                alt: "Enchanted fantasy forest with magical creatures and glowing mystical elements in a video game environment"
+            },
+            {
+                id: 3,
+                title: "Dragon's Quest",
+                category: "rpg",
+                description: "Um RPG clássico com sistema de combate profundo e história rica que se adapta às suas escolhas.",
+                rating: 4.9,
+                price: "R$ 179,99",
+                image: "https://placehold.co/400x250",
+                alt: "Epic medieval fantasy landscape with dragons flying over ancient castles and heroic characters"
+            },
+            {
+                id: 4,
+                title: "Space Commander",
+                category: "strategy",
+                description: "Comandante estratégias galácticas e construa seu império entre as estrelas neste RTS épico.",
+                rating: 4.5,
+                price: "R$ 129,99",
+                image: "https://placehold.co/400x250",
+                alt: "Vast space scene with futuristic spaceships and distant planets in a strategic video game interface"
+            },
+            {
+                id: 5,
+                title: "Ninja Shadow",
+                category: "action",
+                description: "Ação furtiva intensa com combate fluido e parkour em um mundo inspirado no Japão feudal.",
+                rating: 4.7,
+                price: "R$ 159,99",
+                image: "https://placehold.co/400x250",
+                alt: "Stealthy ninja character in traditional Japanese architecture with shadows and moonlight atmosphere"
+            },
+            {
+                id: 6,
+                title: "Ocean Explorer",
+                category: "adventure",
+                description: "Mergulhe nas profundezas dos oceanos e descubra civilizações perdidas e tesouros antigos.",
+                rating: 4.4,
+                price: "R$ 139,99",
+                image: "https://placehold.co/400x250",
+                alt: "Underwater adventure scene with coral reefs, marine life, and ancient ruins in deep ocean environment"
+            },
+            {
+                id: 7,
+                title: "Realm of Legends",
+                category: "rpg",
+                description: "Um MMORPG massivo com classes únicas, dungeons desafiadoras e PvP estratégico.",
+                rating: 4.6,
+                price: "R$ 189,99",
+                image: "https://placehold.co/400x250",
+                alt: "Massive multiplayer fantasy world with diverse character classes and epic battles in medieval setting"
+            },
+            {
+                id: 8,
+                title: "Galactic Wars",
+                category: "strategy",
+                description: "Estratégia em tempo real com batalhas espaciais épicas e diplomacia intergaláctica complexa.",
+                rating: 4.8,
+                price: "R$ 169,99",
+                image: "https://placehold.co/400x250",
+                alt: "Large-scale space battle with multiple starships and explosions in a galactic warfare scenario"
+            }
+        ];
+
+        // Navigation functionality
+        function navigateToPage(pageName) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            // Show target page
+            document.getElementById(pageName).classList.add('active');
+            
+            // Update navigation
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            document.querySelector(`[data-page="${pageName}"]`).classList.add('active');
+            
+            // Close mobile menu
+            document.getElementById('navMenu').classList.remove('active');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+        }
+
+        // Generate game cards
+        function generateGameCards(games = gamesData) {
+            const gamesGrid = document.getElementById('gamesGrid');
+            gamesGrid.innerHTML = '';
+            
+            games.forEach(game => {
+                const gameCard = document.createElement('div');
+                gameCard.className = 'game-card';
+                gameCard.innerHTML = `
+                    <div class="game-image">
+                        <img src="${game.image}" alt="${game.alt}" onerror="this.style.display='none'">
+                    </div>
+                    <div class="game-info">
+                        <h3 class="game-title">${game.title}</h3>
+                        <div class="game-category">${getCategoryName(game.category)}</div>
+                        <p class="game-description">${game.description}</p>
+                        <div class="game-rating">
+                            <div class="stars">${generateStars(game.rating)}</div>
+                            <span>(${game.rating})</span>
+                        </div>
+                        <div class="game-price">${game.price}</div>
+                    </div>
+                `;
+                gamesGrid.appendChild(gameCard);
+            });
+        }
+
+        // Generate star rating
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            let starsHTML = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                starsHTML += '<i class="fas fa-star"></i>';
+            }
+            
+            if (hasHalfStar) {
+                starsHTML += '<i class="fas fa-star-half-alt"></i>';
+            }
+            
+            const emptyStars = 5 - Math.ceil(rating);
+            for (let i = 0; i < emptyStars; i++) {
+                starsHTML += '<i class="far fa-star"></i>';
+            }
+            
+            return starsHTML;
+        }
+
+        // Get category display name
+        function getCategoryName(category) {
+            const categoryNames = {
+                'action': 'Ação',
+                'adventure': 'Aventura',
+                'rpg': 'RPG',
+                'strategy': 'Estratégia'
+            };
+            return categoryNames[category] || category;
+        }
+
+        // Filter games by category
+        function filterGames(category) {
+            const filteredGames = category === 'all' ? gamesData : gamesData.filter(game => game.category === category);
+            generateGameCards(filteredGames);
+            
+            // Update active filter tab
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            filterTabs.forEach(tab => tab.classList.remove('active'));
+            document.querySelector(`[data-category="${category}"]`).classList.add('active');
+        }
+
+        // Contact form submission
+        function handleContactForm(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {
+                name: formData.get('name') || document.getElementById('name').value,
+                email: formData.get('email') || document.getElementById('email').value,
+                subject: formData.get('subject') || document.getElementById('subject').value,
+                message: formData.get('message') || document.getElementById('message').value
+            };
+            
+            // Simulate form submission
+            alert('Mensagem enviada com sucesso! Entraremos em contato em breve.');
+            e.target.reset();
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation clicks
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const page = this.getAttribute('data-page');
+                    navigateToPage(page);
+                });
+            });
+            
+            // Mobile menu toggle
+            document.getElementById('mobileMenuBtn').addEventListener('click', toggleMobileMenu);
+            
+            // Filter tabs
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const category = this.getAttribute('data-category');
+                    filterGames(category);
+                });
+            });
+            
+            // Contact form
+            document.getElementById('contactForm').addEventListener('submit', handleContactForm);
+            
+            // Generate initial game cards
+            generateGameCards();
+            
+            // Header scroll effect
+            window.addEventListener('scroll', function() {
+                const header = document.querySelector('.header');
+                if (window.scrollY > 100) {
+                    header.style.background = 'rgba(0, 0, 0, 0.9)';
+                } else {
+                    header.style.background = 'rgba(255, 255, 255, 0.1)';
+                }
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add some interactive effects
+        document.addEventListener('mousemove', function(e) {
+            const floatingIcons = document.querySelectorAll('.floating-icon');
+            floatingIcons.forEach((icon, index) => {
+                const speed = (index + 1) * 0.5;
+                const x = (e.clientX * speed) / 100;
+                const y = (e.clientY * speed) / 100;
+                icon.style.transform = `translate(${x}px, ${y}px) rotate(${x}deg)`;
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for scroll animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const animatedElements = document.querySelectorAll('.game-card, .feature-card, .stat-item, .contact-item');
+            animatedElements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'all 0.6s ease';
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>
+
